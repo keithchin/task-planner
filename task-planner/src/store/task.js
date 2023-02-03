@@ -1,9 +1,11 @@
 // Utilities
 import { defineStore } from 'pinia'
+import { useStorage } from '@vueuse/core'
+
 
 export const useTaskStore = defineStore('task', {
   state: () => ({
-    tasks: [],
+    tasks: useStorage('tasks', [])
   }),
   getters: {
     inProgressTasks(state) {
@@ -18,8 +20,15 @@ export const useTaskStore = defineStore('task', {
   },
   actions: {
     addTask(task) {
-      console.log("adding task..")
       this.tasks.push(task)
+    },
+
+    deleteTask(id) {
+      this.tasks = this.tasks.filter(task => task.id !== id)
+    },
+
+    updateTaskStatus(task) {
+      console.log(task)
     }
-  }
+  },
 })

@@ -1,73 +1,70 @@
 <template>
-    <div>
-        <v-row justify="center">
-            <v-dialog v-model="dialog" scrollable>
-                <template v-slot:activator="{ props }">
+    <v-row justify="center">
+        <v-dialog v-model="dialog" scrollable>
+            <template v-slot:activator="{ props }">
 
-                    <v-btn v-bind="props" icon="mdi-plus" color="primary" class="add-task"></v-btn>
-                </template>
-                <v-container>
-                    <v-card>
-                        <form @submit.prevent="submit">
-                            <v-container>
-                                <h2 class="mb-4">What would you like to achieve?</h2>
-                                <v-text-field v-model="title.value.value" :counter="10"
-                                    :error-messages="title.errorMessage.value" label="Title"></v-text-field>
+                <v-btn v-bind="props" icon="mdi-plus" color="primary" class="add-task"></v-btn>
+            </template>
+            <v-card>
+                <form @submit.prevent="submit">
+                    <v-container>
+                        <h2 class="mb-4">What would you like to achieve?</h2>
+                        <v-text-field v-model="title.value.value" :counter="10"
+                            :error-messages="title.errorMessage.value" label="Title"></v-text-field>
 
-                                <v-textarea v-model="desc.value.value" :counter="7"
-                                    :error-messages="desc.errorMessage.value" label="Description"></v-textarea>
-                                <v-row>
-                                    <v-col sm="4" v-for="(file, index) in files" :key="`file_` + index">
-                                        <v-btn @click.prevent="deleteFile(file)" icon="mdi-delete-forever" color="error"
-                                            class="file-delete-button">
-                                        </v-btn>
-                                        <v-card class="d-flex flex-column">
-                                            <img :ref="'fileUploaded'"
-                                                src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
-                                                class="img-fluid" style="max-width: 100%;height: 200px;"
-                                                :title="'file' + index" />
-                                            <div class="px-4 py-4">
-                                                {{ file.name }}
-                                            </div>
-                                        </v-card>
-                                    </v-col>
-                                </v-row>
-                                <div class="d-flex mt-8">
-                                    <v-file-input v-model="files" multiple chips label="File input"
-                                        @change="uploadFile"></v-file-input>
-                                    <!-- <v-btn @change="uploadFile">Upload</v-btn> -->
-                                </div>
+                        <v-textarea v-model="desc.value.value" :counter="7" :error-messages="desc.errorMessage.value"
+                            label="Description"></v-textarea>
+                        <v-row>
+                            <v-col sm="4" v-for="(file, index) in files" :key="`file_` + index">
+                                <v-card class="d-flex flex-column">
+                                    <v-btn @click.prevent="deleteFile(file)" icon="mdi-delete-forever" color="error"
+                                        class="file-delete-button">
+                                    </v-btn>
+                                    <img :ref="'fileUploaded'"
+                                        src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
+                                        class="img-fluid" style="max-width: 100%;height: 200px;"
+                                        :title="'file' + index" />
+                                    <div class="px-4 py-4">
+                                        {{ file.name }}
+                                    </div>
+                                </v-card>
+                            </v-col>
+                        </v-row>
+                        <div class="d-flex mt-8">
+                            <v-file-input v-model="files" multiple chips label="File input"
+                                @change="uploadFile"></v-file-input>
+                            <!-- <v-btn @change="uploadFile">Upload</v-btn> -->
+                        </div>
 
-                                <v-select v-model="select.value.value" :items="items"
-                                    :error-messages="select.errorMessage.value" label="Select board to assign task to">
-                                </v-select>
+                        <v-select v-model="select.value.value" :items="items"
+                            :error-messages="select.errorMessage.value" label="Select board to assign task to">
+                        </v-select>
 
-                                <Datepicker class="mb-4" v-model="date.value.value"
-                                    :error-messages="date.errorMessage.value" placeholder="Select Date & Time">
-                                </Datepicker>
+                        <Datepicker class="mb-4" v-model="date.value.value" :error-messages="date.errorMessage.value"
+                            placeholder="Select Date & Time">
+                        </Datepicker>
 
-                                <v-combobox v-model="tags.value.value" multiple label="Add some labels or tags"
-                                    :items="[]" chips></v-combobox>
+                        <v-combobox v-model="tags.value.value" multiple label="Add some labels or tags" :items="[]"
+                            chips></v-combobox>
 
-                                <v-btn class="me-4" type="submit">
-                                    submit
-                                </v-btn>
+                        <v-btn class="me-4" type="submit">
+                            submit
+                        </v-btn>
 
-                                <v-btn @click="handleReset">
-                                    clear
-                                </v-btn>
-                            </v-container>
-                        </form>
-                    </v-card>
-                </v-container>
-            </v-dialog>
-        </v-row>
-    </div>
+                        <v-btn @click="handleReset">
+                            clear
+                        </v-btn>
+                    </v-container>
+                </form>
+            </v-card>
+        </v-dialog>
+    </v-row>
 
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { v4 as uuidv4 } from 'uuid';
+import { ref, watchEffect } from 'vue'
 import { useTaskStore } from '@/store/task'
 import { useField, useForm } from 'vee-validate'
 
@@ -76,11 +73,19 @@ import { useField, useForm } from 'vee-validate'
 const files = ref([])
 const fileUploaded = ref()
 const readers = ref([])
-// const tags = ref([])
+const dialog = ref(false)
+
+
+// props
+const props = defineProps(['open'])
 
 
 // Store functions 
 const taskStore = useTaskStore()
+
+// Watchers
+watchEffect(() => dialog.value = props.open);
+
 
 // Delete file
 const deleteFile = (file) => {
@@ -169,7 +174,9 @@ const items = ref([
 ])
 
 const submit = handleSubmit(values => {
+
     task.value = {
+        id: uuidv4(),
         title: values.title,
         desc: values.desc,
         status: values.select,
@@ -177,14 +184,11 @@ const submit = handleSubmit(values => {
         tags: values.combobox,
         files: values.files ? value.files : null,
     }
-    console.log(task.value)
     taskStore.addTask(task.value)
     dialog.value = false
 })
 
 
-
-const dialog = ref(false)
 </script>
 
 <style scoped>
@@ -195,7 +199,7 @@ const dialog = ref(false)
 }
 
 .file-delete-button {
-    position: fixed;
+    position: absolute;
     z-index: 999999;
     margin-left: 0.5rem;
     margin-top: 0.5rem;
