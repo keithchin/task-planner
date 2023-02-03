@@ -1,21 +1,22 @@
 <template>
-    <draggable tag="v-card" itemKey="name">
-        <template #item="{ element: item }">
-            <!-- <v-card
-                width="400"
-                title="This is a title"
-                subtitle="This is a subtitle"
-                text="This is content"
-            >
-                <v-progress-linear :indeterminate="true"></v-progress-linear>
-            </v-card> -->
-            HEllo
-        </template>
-    </draggable>
+
+    <v-card>
+        <ul>
+            <li>Title</li>
+            <span>{{ props.task.title }}</span>
+            <li>Description</li>
+            <span>{{ props.task.desc }}</span>
+            <li>Estimated Time</li>
+            <span>{{ props.task.date }}</span>
+        </ul>
+    </v-card>
 </template>
 
 <script setup>
 import draggable from 'vuedraggable'
+import { ref } from 'vue'
+
+const props = defineProps(['task'])
 
 </script>
 
