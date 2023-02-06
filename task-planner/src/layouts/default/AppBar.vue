@@ -8,8 +8,6 @@
 
     <v-btn :icon="theme.global.current.value.dark ? `mdi-weather-night` : `mdi-weather-sunny`"
       @click="toggleTheme"></v-btn>
-    <!-- {{ theme.global.current.value.dark }} -->
-
   </v-app-bar>
 </template>
 

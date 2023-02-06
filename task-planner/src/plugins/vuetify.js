@@ -12,7 +12,7 @@ import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 
 const myCustomLightTheme = {
-  dark: true,
+  dark: false,
   colors: {
     background: '#FFFFFF',
     surface: '#FFFFFF',
