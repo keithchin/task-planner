@@ -8,7 +8,7 @@
             <v-card>
                 <form @submit.prevent="submit">
                     <v-container>
-                        <h2 class="mb-4">What would you like to achieve?</h2>
+                        <h2 class="mb-4">Edit Task {{}}</h2>
                         <v-text-field v-model="title.value.value" :counter="50"
                             :error-messages="title.errorMessage.value" label="Title"></v-text-field>
 
@@ -36,6 +36,10 @@
                             <!-- <v-btn @change="uploadFile">Upload</v-btn> -->
                         </div>
 
+
+                        <v-textarea v-model="comments.value.value" :counter="500"
+                            :error-messages="comments.errorMessage.value" label="Comments"></v-textarea>
+
                         <v-select v-model="select.value.value" :items="items"
                             :error-messages="select.errorMessage.value" label="Select board to assign task to">
                         </v-select>
@@ -43,8 +47,7 @@
                         <Datepicker class="mb-4" v-model="date.value.value" time-picker
                             :error-messages="date.errorMessage.value" placeholder="Select Time">
                         </Datepicker>
-                        <span>{{ date.errorMessage.value }}</span>
-                        <input v-model="date.value.value" v-show="false" v-validate="'required'" />
+
                         <v-combobox v-model="tags.value.value" multiple label="Add some labels or tags" :items="[]"
                             chips></v-combobox>
 
@@ -52,7 +55,7 @@
                             submit
                         </v-btn>
 
-                        <v-btn @click="reset">
+                        <v-btn @click="reset" type="reset">
                             clear
                         </v-btn>
                     </v-container>
@@ -65,9 +68,10 @@
 
 <script setup>
 import { v4 as uuidv4 } from 'uuid';
-import { ref, watchEffect, onBeforeMount } from 'vue'
+import { ref, watch, watchEffect, onBeforeMount, onMounted } from 'vue'
 import { useTaskStore } from '@/store/task'
 import { useField, useForm } from 'vee-validate'
+import { useRouter } from 'vue-router'
 
 // Refs
 
@@ -75,26 +79,49 @@ const files = ref([])
 const fileUploaded = ref()
 const readers = ref([])
 const dialog = ref(false)
-const dateJs = new Date()
+const taskToUpdate = ref()
+
+const router = useRouter()
 
 
 // props
-const props = defineProps(['open'])
+const props = defineProps(['open', 'taskId'])
 
-// Before Mounting
-onBeforeMount(() => {
-    date.value.value = {
-        hours: dateJs.getHours() + 1,
-        minutes: dateJs.getMinutes(),
+const emit = defineEmits(['close'])
+
+// Watchers
+
+watch(() => dialog.value, () => {
+    if (dialog.value == false) {
+        emit('close')
     }
 })
-
 
 // Store functions 
 const taskStore = useTaskStore()
 
 // Watchers
 watchEffect(() => dialog.value = props.open);
+
+onBeforeMount(() => {
+    // console.log(props.taskId)
+    taskToUpdate.value = taskStore.tasks.find(t => t.id == props.taskId)
+    if (taskToUpdate.value) {
+        title.value.value = taskToUpdate.value.title
+        desc.value.value = taskToUpdate.value.desc
+        date.value.value = taskToUpdate.value.date
+        files.value = taskToUpdate.value.files
+        select.value.value = taskToUpdate.value.status
+        tags.value.value = taskToUpdate.value.tags
+        comments.value.value = taskToUpdate.value.comments ?? ''
+        if (files.value) {
+            uploadFile()
+        }
+    }
+    else {
+        router.push('/')
+    }
+})
 
 
 // Delete file
@@ -155,6 +182,7 @@ const { handleSubmit, handleReset } = useForm({
 
         date(value) {
             if (value) return true
+
             return 'Select a date.'
         },
         // checkbox(value) {
@@ -162,6 +190,11 @@ const { handleSubmit, handleReset } = useForm({
 
         //     return 'Must be checked.'
         // },
+
+        comments(value) {
+            if (value?.length < 500) return true
+            return 'Comments cannot exceed more than 500 characters.'
+        },
 
         tags(value) {
             return true
@@ -181,20 +214,21 @@ const items = ref([
     'In-Progress',
     'Completed',
 ])
+const comments = useField('comments')
 
 const submit = handleSubmit(values => {
+
     task.value = {
-        id: uuidv4(),
+        id: props.taskId,
         title: values.title,
         desc: values.desc,
         status: values.select,
         date: values.date,
         tags: values.combobox,
-        files: files.value,
+        files: values.files ? value.files : null,
+        comments: values.comments,
     }
-    taskStore.addTask(task.value)
-    handleReset()
-    files.value = []
+    taskStore.updateTask(task.value)
     dialog.value = false
 })
 

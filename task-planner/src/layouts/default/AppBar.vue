@@ -6,7 +6,9 @@
       Task Planner
     </v-app-bar-title>
 
-    <v-btn @click="toggleTheme">toggle theme</v-btn>
+    <v-btn :icon="theme.global.current.value.dark ? `mdi-weather-night` : `mdi-weather-sunny`"
+      @click="toggleTheme"></v-btn>
+    <!-- {{ theme.global.current.value.dark }} -->
 
   </v-app-bar>
 </template>
@@ -14,7 +16,7 @@
 <script setup>
 import { useTheme } from 'vuetify'
 
-const theme =  useTheme()
+const theme = useTheme()
 
 const toggleTheme = () => {
   theme.global.name.value = theme.global.current.value.dark ? 'light' : 'dark'

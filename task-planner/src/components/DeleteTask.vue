@@ -18,6 +18,7 @@
         </v-dialog>
     </v-row>
 </template>
+
 <script setup>
 const props = defineProps(['open'])
 defineEmits(['close'])

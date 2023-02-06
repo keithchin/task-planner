@@ -1,6 +1,6 @@
 
 <template>
-    <v-banner class="progress__banner" icon="mdi-vuetify">
+    <v-banner class="progress__banner">
         <h2 class="mb-4 d-flex justify-center">Progress</h2>
         <v-progress-linear height="45" color="purple" :model-value="taskStore.tasks.length > 0 ? progress : 100">
             <template v-slot:default="{ value }">
@@ -17,6 +17,8 @@ import { useTaskStore } from '@/store/task'
 import { computed } from 'vue';
 
 const taskStore = useTaskStore()
+
+// Computed
 const completedTasks = computed(() => taskStore.tasks.filter((task) => task.status === 'Completed').length)
 const totalProgressTasks = computed(() => taskStore.tasks.length)
 const progress = computed(() => (
