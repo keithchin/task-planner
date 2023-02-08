@@ -18,10 +18,10 @@
                 }})</h4>
                 <div class="draggable-wrapper">
 
-                    <draggable class="draggable-container" v-model="toDoTasks" :itemKey="id" group="tasks"
+                    <draggable class="draggable-container" v-model="toDoTasks" :itemKey="id" group="tasks" :options="{setData: modifyDragItem}"
                         :animation="150" @start="log" @end="log" @change="log">
                         <template #item="{ element, index }">
-                            <TaskCard :task="element" :key="toDoTasks" />
+                            <TaskCard v-bind:style="{'top': setCardHeight(index)}" :task="element" :key="toDoTasks" />
 
                         </template>
                     </draggable>
@@ -34,10 +34,10 @@
     tasksLength
 }})</h4>
                 <div class="draggable-wrapper">
-                    <draggable v-model="inProgressTasks" :itemKey="id" group="tasks" :animation="150" @start="log"
+                    <draggable class="draggable-container"  v-model="inProgressTasks" :itemKey="id" group="tasks" :animation="150" @start="log" :options="{setData: modifyDragItem}"
                         @end="log" @change="log">
                         <template #item="{ element, index }">
-                            <TaskCard :task="element" :key="inProgressTasks" />
+                            <TaskCard v-bind:style="{'top': setCardHeight(index)}" :task="element" :key="inProgressTasks" />
 
                         </template>
                     </draggable>
@@ -49,10 +49,10 @@
                     taskStore.tasks.length
                 }})</h4>
                 <div class="draggable-wrapper">
-                    <draggable v-model="completedTasks" :itemKey="id" group="tasks" :animation="150" @start="log"
+                    <draggable class="draggable-container"  v-model="completedTasks" :itemKey="id" group="tasks" :animation="150" @start="log" :options="{setData: modifyDragItem}"
                         @end="log" @change="log">
                         <template #item="{ element, index }">
-                            <TaskCard :task="element" :key="completedTasks" />
+                            <TaskCard v-bind:style="{'top': setCardHeight(index)}" :task="element" :key="completedTasks"  />
 
                         </template>
                     </draggable>
@@ -66,7 +66,7 @@
 import TaskCard from '@/components/TaskCard.vue'
 import draggable from 'vuedraggable'
 import { useTaskStore } from '@/store/task'
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onBeforeMount } from 'vue'
 
 const taskStore = useTaskStore()
 
@@ -74,12 +74,25 @@ const search = ref('')
 const range = ref([0, 24])
 const dateJs = new Date()
 const rangeMoved = ref(false)
+const dragImage = ref()
 
 watch(() => range.value, () => {
     rangeMoved.value = true
 })
 
+onBeforeMount(() => {
+    let img = new Image()
+    img.src = 'https://www.google.no/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png'
+    dragImage.value = img
+})
 
+// Methods
+
+const setCardHeight = (idx) => { return "calc(100px * " + idx + ")"}
+
+const handler = (dataTransfer) => {
+    dataTransfer.setDragImage(dragImage.value, 0, 0)
+}
 
 const toDoTasks = computed({
     get() {
@@ -161,7 +174,15 @@ const checkTime = (task) => {
     border: 1px gray solid;
 }
 
+.draggable-container {
+    position: relative;
+}
+
 .search-filter-bar {
     max-width: 400px;
+}
+
+.ghost-class {
+    top: 200px;
 }
 </style>

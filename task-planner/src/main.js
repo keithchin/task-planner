@@ -12,10 +12,12 @@ import { createApp, watch } from 'vue'
 
 // Plugins
 import { registerPlugins } from '@/plugins'
-
+import { VueFire, VueFireAuth } from 'vuefire'
 import Datepicker from '@vuepic/vue-datepicker';
 import VueDraggableNext from 'vuedraggable'
 import '@vuepic/vue-datepicker/dist/main.css'
+import { firebaseApp } from '@/firebase'
+
 
 
 import { createPinia } from 'pinia'
@@ -26,6 +28,16 @@ pinia.use(createPersistedState({
     storage: sessionStorage,
 }))
 const app = createApp(App)
+
+app
+  .use(VueFire, {
+    // imported above but could also just be created here
+    firebaseApp,
+    modules: [
+      // we will see other modules later on
+      VueFireAuth(),
+    ],
+  })
 
 
 

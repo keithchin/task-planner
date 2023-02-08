@@ -1,12 +1,12 @@
 // Utilities
 import { defineStore } from 'pinia'
-// import { useStorage } from '@vueuse/core'
+import { useStorage } from '@vueuse/core'
 
 
 export const useTaskStore = defineStore('task', {
   state: () => ({
-    // tasks: useStorage('tasks', [])
-    tasks: []
+    tasks: useStorage('tasks', [])
+    // tasks: []
   }),
   getters: {
     inProgressTasks(state) {

@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <v-card :title="props.task.title" variant="outlined" class=" py-4 my-4">
+    <div class="task-card">
+        <v-card :title="props.task.title"  class=" py-4 my-4">
             <template v-slot:title>
                 <div class="d-flex justify-space-between">
                     <h3>{{ props.task.title }}</h3>
@@ -14,9 +14,11 @@
                 </div>
             </template>
             <template v-slot:subtitle>
-                <v-chip v-for="(tag, index) in props.task.tags">
+                <div class="tags-slot">
+                    <v-chip v-for="(tag, index) in props.task.tags">
                     {{ tag }}
                 </v-chip>
+                </div>
             </template>
             <div class="d-flex flex-column px-4">
                 <span class="task-card__title">Title: </span>
@@ -44,7 +46,7 @@
 
 <script setup>
 import DeleteTask from '@/components/DeleteTask.vue'
-import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount, computed } from 'vue'
 import { useTaskStore } from '@/store/task'
 
 const props = defineProps(['task'])
@@ -65,6 +67,13 @@ const closeModal = (value) => {
 
 <style scoped lang="scss">
 .task-card {
+    position: absolute;
+    width: 100%;
+    // $n: 1;
+
+    // &:not(:nth-child(#{$n})) {
+    //         top: calc(100px * $n);
+    // }
     &__icon {
         cursor: pointer;
 
@@ -82,6 +91,10 @@ const closeModal = (value) => {
         font-style: italic;
         font-size: 12px;
     }
+}
+
+.tags-slot {
+    min-height: 40px;
 }
 </style>
 

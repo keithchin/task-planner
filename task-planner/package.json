@@ -13,6 +13,7 @@
     "@vuepic/vue-datepicker": "^3.6.7",
     "@vueuse/core": "^9.12.0",
     "core-js": "^3.8.3",
+    "firebase": "^9.17.1",
     "pinia": "^2.0.23",
     "pinia-plugin-persistedstate": "^3.0.2",
     "roboto-fontface": "*",
@@ -21,6 +22,7 @@
     "vue": "^3.2.13",
     "vue-router": "^4.0.0",
     "vuedraggable": "^4.1.0",
+    "vuefire": "^3.0.1",
     "vuetify": "^3.0.0",
     "webfontloader": "^1.0.0"
   },
