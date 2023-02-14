@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="d-flex mx-4 mt-4 flex-column justify-end search-filter-bar">
+        <!-- <div class="d-flex mx-4 mt-4 flex-column justify-end search-filter-bar">
             <h4 class="mb-4">Search / Filter Time</h4>
             <v-text-field v-model="search" label="Search a task (e.g. title, description, tags)">
 
@@ -10,7 +10,7 @@
                     {{ modelValue > 1 ? modelValue + ' hours' : modelValue + ' hour'}}
                 </template>
             </v-range-slider>
-        </div>
+        </div> -->
         <v-row class="my-16">
             <v-col cols="12" sm="4">
                 <h4>To-Do ({{ taskStore.tasks.filter((task) => task.status === 'To-Do').length }}/{{
@@ -18,10 +18,10 @@
                 }})</h4>
                 <div class="draggable-wrapper">
 
-                    <draggable class="draggable-container" v-model="toDoTasks" :itemKey="id" group="tasks" :options="{setData: modifyDragItem}"
-                        :animation="150" @start="log" @end="log" @change="log">
+                    <draggable class="draggable-container" :move="checkMove" v-model="toDoTasks" itemKey="id" group="tasks" 
+                        :animation="150" @start="startDrag" @end="drag =  false">
                         <template #item="{ element, index }">
-                            <TaskCard v-bind:style="{'top': setCardHeight(index)}" :task="element" :key="toDoTasks" />
+                            <TaskCard v-bind:style="{'top': setCardHeight(index)}" :task="element" />
 
                         </template>
                     </draggable>
@@ -30,14 +30,12 @@
             <v-col cols="12" sm="4">
                 <h4>In Progress ({{ taskStore.tasks.filter((task) => task.status === 'In-Progress').length }}/{{
                     taskStore.tasks.length
-                }}{{
-    tasksLength
-}})</h4>
+                }})</h4>
                 <div class="draggable-wrapper">
-                    <draggable class="draggable-container"  v-model="inProgressTasks" :itemKey="id" group="tasks" :animation="150" @start="log" :options="{setData: modifyDragItem}"
-                        @end="log" @change="log">
+                    <draggable class="draggable-container" :move="checkMove"  v-model="inProgressTasks" itemKey="id" group="tasks" :animation="150" @start="startDrag" @end="drag =  false" 
+                         >
                         <template #item="{ element, index }">
-                            <TaskCard v-bind:style="{'top': setCardHeight(index)}" :task="element" :key="inProgressTasks" />
+                            <TaskCard v-bind:style="{'top': setCardHeight(index)}" :task="element" />
 
                         </template>
                     </draggable>
@@ -49,10 +47,10 @@
                     taskStore.tasks.length
                 }})</h4>
                 <div class="draggable-wrapper">
-                    <draggable class="draggable-container"  v-model="completedTasks" :itemKey="id" group="tasks" :animation="150" @start="log" :options="{setData: modifyDragItem}"
-                        @end="log" @change="log">
+                    <draggable class="draggable-container" :move="checkMove"  v-model="completedTasks" itemKey="id" group="tasks" :animation="150" @start="startDrag" @end="drag =  false" 
+                        >
                         <template #item="{ element, index }">
-                            <TaskCard v-bind:style="{'top': setCardHeight(index)}" :task="element" :key="completedTasks"  />
+                            <TaskCard v-bind:style="{'top': setCardHeight(index)}" :task="element" />
 
                         </template>
                     </draggable>
@@ -70,11 +68,13 @@ import { computed, ref, watch, onBeforeMount } from 'vue'
 
 const taskStore = useTaskStore()
 
+const drag = ref(false)
 const search = ref('')
 const range = ref([0, 24])
 const dateJs = new Date()
 const rangeMoved = ref(false)
 const dragImage = ref()
+const dragIndex = ref(0)
 
 watch(() => range.value, () => {
     rangeMoved.value = true
@@ -94,6 +94,17 @@ const handler = (dataTransfer) => {
     dataTransfer.setDragImage(dragImage.value, 0, 0)
 }
 
+// Check movement of draggable card
+const checkMove = (evt) => {
+    console.log(evt.draggedContext.futureIndex)
+    console.log(evt.relatedContext.index)
+
+}
+
+const startDrag = (evt) => {
+    console.log(evt)
+}
+
 const toDoTasks = computed({
     get() {
         if (search.value.length > 2 || rangeMoved.value == true) {
@@ -107,6 +118,7 @@ const toDoTasks = computed({
     set(value) {
         let task = value.find((task) => task.status !== "To-Do")
         if (task) {
+            console.log(value)
             taskStore.updateTaskStatus(task.id, 'To-Do')
         }
     }
@@ -124,6 +136,7 @@ const inProgressTasks = computed({
     set(value) {
         let task = value.find((task) => task.status !== "In-Progress")
         if (task) {
+            console.log(value)
             taskStore.updateTaskStatus(task.id, 'In-Progress')
         }
     }
