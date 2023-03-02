@@ -9,8 +9,8 @@
                 <form @submit.prevent="submit">
                     <v-container>
                         <h2 class="mb-4">What would you like to achieve?</h2>
-                        <v-text-field v-model="title.value.value" :counter="50"
-                            :error-messages="title.errorMessage.value" label="Title"></v-text-field>
+                        <v-text-field v-model="title.value.value" :counter="50" :error-messages="title.errorMessage.value"
+                            label="Title"></v-text-field>
 
                         <v-textarea v-model="desc.value.value" :counter="500" :error-messages="desc.errorMessage.value"
                             label="Description"></v-textarea>
@@ -22,8 +22,7 @@
                                     </v-btn>
                                     <img :ref="'fileUploaded'"
                                         src="https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png"
-                                        class="img-fluid" style="max-width: 100%;height: 200px;"
-                                        :title="'file' + index" />
+                                        class="img-fluid" style="max-width: 100%;height: 200px;" :title="'file' + index" />
                                     <div class="px-4 py-4">
                                         {{ file.name }}
                                     </div>
@@ -36,8 +35,8 @@
                             <!-- <v-btn @change="uploadFile">Upload</v-btn> -->
                         </div>
 
-                        <v-select v-model="select.value.value" :items="items"
-                            :error-messages="select.errorMessage.value" label="Select board to assign task to">
+                        <v-select v-model="select.value.value" :items="items" :error-messages="select.errorMessage.value"
+                            label="Select board to assign task to">
                         </v-select>
 
                         <Datepicker class="mb-4" v-model="date.value.value" time-picker
@@ -60,7 +59,6 @@
             </v-card>
         </v-dialog>
     </v-row>
-
 </template>
 
 <script setup>
@@ -192,7 +190,7 @@ const submit = handleSubmit(values => {
         tags: values.combobox,
         files: files.value,
     }
-    taskStore.addTask(task.value)
+    taskStore.addTask(task.value, task.value.status)
     handleReset()
     files.value = []
     dialog.value = false

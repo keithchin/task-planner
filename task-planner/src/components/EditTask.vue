@@ -105,7 +105,7 @@ watchEffect(() => dialog.value = props.open);
 
 onBeforeMount(() => {
     // console.log(props.taskId)
-    taskToUpdate.value = taskStore.tasks.find(t => t.id == props.taskId)
+    taskToUpdate.value = taskStore.toDo.find(t => t.id == props.taskId) ?? taskStore.inProgress.find(t => t.id == props.taskId) ?? taskStore.completed.find(t => t.id == props.taskId) ?? []
     if (taskToUpdate.value) {
         title.value.value = taskToUpdate.value.title
         desc.value.value = taskToUpdate.value.desc
@@ -114,14 +114,20 @@ onBeforeMount(() => {
         select.value.value = taskToUpdate.value.status
         tags.value.value = taskToUpdate.value.tags
         comments.value.value = taskToUpdate.value.comments ?? ''
-        if (files.value) {
-            uploadFile()
-        }
+        // if (files.value) {
+        //     uploadFile()
+        // }
     }
     else {
         router.push('/')
     }
 })
+
+// Find status of task based on task id
+
+const findStatus = (taskId) => {
+
+}
 
 
 // Delete file
@@ -228,7 +234,7 @@ const submit = handleSubmit(values => {
         files: values.files ? value.files : null,
         comments: values.comments,
     }
-    taskStore.updateTask(task.value)
+    taskStore.updateTask(task.value, task.value.status)
     dialog.value = false
 })
 

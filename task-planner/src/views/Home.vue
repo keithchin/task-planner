@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container>
-      <ProgressBar />
+      <!-- <ProgressBar /> -->
       <TaskGrid />
     </v-container>
     <AddTask :open="open" />

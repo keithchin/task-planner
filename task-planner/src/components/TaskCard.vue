@@ -1,6 +1,6 @@
 <template>
     <div class="task-card">
-        <v-card :title="props.task.title"  class=" py-4 my-4">
+        <v-card :title="props.task.title" class=" py-4 my-4">
             <template v-slot:title>
                 <div class="d-flex justify-space-between">
                     <h3>{{ props.task.title }}</h3>
@@ -8,16 +8,15 @@
                         <RouterLink :to="props.task.id" @click="editModal = true">
                             <v-icon class="task-card__icon px-4" icon="mdi-pencil"></v-icon>
                         </RouterLink>
-                        <v-icon @click="openModal = true" class="task-card__icon px-4"
-                            icon="mdi-delete-forever"></v-icon>
+                        <v-icon @click="openModal = true" class="task-card__icon px-4" icon="mdi-delete-forever"></v-icon>
                     </div>
                 </div>
             </template>
             <template v-slot:subtitle>
                 <div class="tags-slot">
                     <v-chip v-for="(tag, index) in props.task.tags">
-                    {{ tag }}
-                </v-chip>
+                        {{ tag }}
+                    </v-chip>
                 </div>
             </template>
             <div class="d-flex flex-column px-4">
@@ -28,13 +27,13 @@
                 <span class="task-card__title">Estimated Time: </span>
                 <span>{{
                     props.task.date.hours < date.getHours() ? 24 - date.getHours() + props.task.date.hours :
-                        props.task.date.minutes > date.getMinutes() ? props.task.date.hours - date.getHours() :
-                            props.task.date.hours - date.getHours() - 1
+                    props.task.date.minutes > date.getMinutes() ? props.task.date.hours - date.getHours() :
+                        props.task.date.hours - date.getHours() - 1
                 }} hours and {{
     props.task.date.minutes > date.getMinutes() ?
-        props.task.date.minutes -
-        date.getMinutes() :
-        60 - date.getMinutes() + props.task.date.minutes
+    props.task.date.minutes -
+    date.getMinutes() :
+    60 - date.getMinutes() + props.task.date.minutes
 }} minutes remaining</span>
                 <span v-if="props.task.comments" class="task-card__title">Comments: </span>
                 <span class="task-card__comments"> {{ props.task.comments }}</span>
@@ -59,7 +58,7 @@ const openModal = ref(false)
 const closeModal = (value) => {
     openModal.value = false
     if (value == true) {
-        taskStore.deleteTask(props.task.id)
+        taskStore.deleteTask(props.task.id, props.task.status)
     }
 }
 
@@ -69,11 +68,7 @@ const closeModal = (value) => {
 .task-card {
     position: absolute;
     width: 100%;
-    // $n: 1;
 
-    // &:not(:nth-child(#{$n})) {
-    //         top: calc(100px * $n);
-    // }
     &__icon {
         cursor: pointer;
 

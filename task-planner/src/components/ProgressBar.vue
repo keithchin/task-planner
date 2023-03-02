@@ -19,7 +19,7 @@ import { computed } from 'vue';
 const taskStore = useTaskStore()
 
 // Computed
-const completedTasks = computed(() => taskStore.tasks.filter((task) => task.status === 'Completed').length)
+const completedTasks = computed(() => taskStore.tasks.get('completed').length)
 const totalProgressTasks = computed(() => taskStore.tasks.length)
 const progress = computed(() => (
     taskStore.tasks.filter((task) => task.status === 'Completed').length / taskStore.tasks.length
